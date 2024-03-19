@@ -108,7 +108,7 @@ Attributes.prototype.updateTransforms = function( nTfms, ... minmax) {
   glMatrix.vec3.subtract(volume,this._maxP,this._minP);*/
   let randVec = glMatrix.vec3.create();
   var len2 = 0.0;
-  for (let i=0; i<15; i++) {
+  for (let i=0; i<24; i++) {
     let m4 = glMatrix.mat4.create();
     /*
     // make a unit vector
@@ -152,8 +152,21 @@ Attributes.prototype.updateTransforms = function( nTfms, ... minmax) {
       glMatrix.mat4.rotate(m4,m4, -Math.PI/2, glMatrix.vec3.fromValues(1.0,0.0, 0.0));
       glMatrix.mat4.rotate(m4,m4, -Math.PI/2, glMatrix.vec3.fromValues(0.0,0.0, 1.0));
       // Add a random vector scaled upto the viewing volume
-      randVec[0] = 5 - (i%6)*4.5;
-      randVec[1] = -20;
+      if ( (i%6) > 2) {
+        randVec[0] = -15 - (i%6)*4.5;
+      }
+      else {
+        randVec[0] = 7 - (i%6)*4.5;
+      }
+
+      if (i < 18) {
+        randVec[1] = -20;
+      }
+      else {
+        randVec[1] = -10;
+      }
+      
+      //randVec[1] = -20;
       randVec[2] = 10;
       glMatrix.mat4.translate( m4, m4, randVec );
     // Copy the matrix into the float buffer for transforms

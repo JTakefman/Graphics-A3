@@ -50,7 +50,7 @@ var LAST_FRAME = Date.now();
 var VAO;
 
 // Number of boxes
-const N_BOXES = 18;
+const N_BOXES = 24;
 
 function main() {
   // Retrieve <canvas> element
