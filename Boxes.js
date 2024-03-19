@@ -49,6 +49,7 @@ var SPEED;
 // Initialize time of last rotation update
 var LAST_FRAME = Date.now();
 var VAO;
+var VAO2;
 var proj_matrix;
 // Number of boxes
 const N_BOXES = 24;

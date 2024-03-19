@@ -107,8 +107,8 @@ Attributes.prototype.updateTransforms = function( nTfms, ... minmax) {
   let volume = glMatrix.vec3.create();
   glMatrix.vec3.subtract(volume,this._maxP,this._minP);*/
   let randVec = glMatrix.vec3.create();
-  var len2 = 0.0;
-  for (let i=0; i<24; i++) {
+
+  for (let i=0; i<nTfms; i++) {
     let m4 = glMatrix.mat4.create();
     /*
     // make a unit vector
@@ -183,5 +183,13 @@ Attributes.prototype.updateTransforms = function( nTfms, ... minmax) {
     }
 	}
   }
+  let testm4 = glMatrix.mat4.create();
+  for ( let j=0; j<16; j++) {
+    console.log(j + ": " + testm4[j]);
+	  this.tfms[nTfms*16+j] = testm4[j];
+    if ((j+1)%4 == 0 && j > 0) {
+      console.log("\n");
+    }
+	}
   return;
 }
