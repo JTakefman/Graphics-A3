@@ -38,6 +38,7 @@
 // LookAtTrianglesWithKeys.js
 // TexturedQuad.js
 // Vertex shader program
+
 var VSHADER_SOURCE = null;
 // Fragment shader program
 var FSHADER_SOURCE = null;
@@ -48,9 +49,13 @@ var SPEED;
 // Initialize time of last rotation update
 var LAST_FRAME = Date.now();
 var VAO;
-
+var proj_matrix;
 // Number of boxes
 const N_BOXES = 24;
+let updateCamera ={ 
+  elevation:Math.PI/4, 
+  azimuth: 7*Math.PI/4
+} 
 
 function main() {
   // Retrieve <canvas> element
@@ -129,21 +134,17 @@ function start(gl) {
   }
 
   // Create the matrix to set the projection matrix
-  var projMatrix = glMatrix.mat4.create();
-  glMatrix.mat4.ortho(projMatrix,-12.0, 12.0, -12.0, 12.0, -12.0, 12.0);
-  glMatrix.mat4.translate(projMatrix, projMatrix, glMatrix.vec3.fromValues(0.0,-10.0,0.0));
-  glMatrix.mat4.rotate(projMatrix, projMatrix, Math.PI/4, glMatrix.vec3.fromValues(1.0, 0.0,0.0))
-  glMatrix.mat4.rotate(projMatrix, projMatrix, -Math.PI/4, glMatrix.vec3.fromValues(0.0, 1.0,0.0))
+  
+
+  //glMatrix.mat4.translate(projMatrix, projMatrix, glMatrix.vec3.fromValues(0.0,-10.0,0.0));
+  //glMatrix.mat4.rotate(projMatrix, projMatrix, Math.PI/4, glMatrix.vec3.fromValues(1.0, 0.0,0.0))
+  //glMatrix.mat4.rotate(projMatrix, projMatrix, 7*Math.PI/4, glMatrix.vec3.fromValues(0.0, 1.0,0.0))
   //glMatrix.mat4.lookat(projMatrix,)
 
-  var u_proj_matrix = gl.getUniformLocation(gl.program, 'proj_matrix');
-  if (u_proj_matrix) {
-     gl.uniformMatrix4fv(u_proj_matrix, false, projMatrix );
-  } else {
-      console.log('Failed to get the storage location of proj_matrix');
-      u_proj_matrix = 0;
-      // return;
-  }
+
+  var gui = new dat.GUI(); 
+  gui.add(updateCamera, 'elevation', -2*Math.PI, 2*Math.PI); 
+  gui.add(updateCamera, 'azimuth', -2*Math.PI, 2*Math.PI); 
     
   // Current axis angle
   var axisAngle = 0.0;
@@ -265,6 +266,21 @@ function draw(gl, n, currentAngle, axisAngle, u_rot_matrix) {
     let rotMatrix = glMatrix.mat4.create();  
   //glMatrix.mat4.fromYRotation(rotMatrix, glMatrix.glMatrix.toRadian(axisAngle));
   //glMatrix.mat4.rotateX(rotMatrix, rotMatrix, glMatrix.glMatrix.toRadian(currentAngle));
+  projMatrix = glMatrix.mat4.create();
+  glMatrix.mat4.ortho(projMatrix,-24.0, 24.0, -24.0, 24.0, -24.0, 24.0);
+  
+  glMatrix.mat4.rotate(projMatrix, projMatrix, updateCamera.elevation, glMatrix.vec3.fromValues(1.0, 0.0,0.0))
+  glMatrix.mat4.rotate(projMatrix, projMatrix, updateCamera.azimuth, glMatrix.vec3.fromValues(0.0, 1.0,0.0))
+
+  var u_proj_matrix = gl.getUniformLocation(gl.program, 'proj_matrix');
+  if (u_proj_matrix) {
+     gl.uniformMatrix4fv(u_proj_matrix, false, projMatrix );
+  } else {
+      console.log('Failed to get the storage location of proj_matrix');
+      u_proj_matrix = 0;
+      // return;
+  }
+
   if ( u_rot_matrix != 0 ) {
      gl.uniformMatrix4fv(u_rot_matrix, false, rotMatrix );
   }
