@@ -90,6 +90,8 @@ Attributes.prototype.updateColors = function( nColors ) {
 // minmax must be two Float32Array as created by gl.Matrix.vec3 
 // specifying the minimum and maximum of the volume
 Attributes.prototype.updateTransforms = function( nTfms, ... minmax) { 
+  
+  /*
   if ( minmax.length >= 1 ) {
 	  if ( minmax[0] instanceof Float32Array ) {
 		glMatrix.vec3.copy(this._minP, minmax[0]);
@@ -97,16 +99,18 @@ Attributes.prototype.updateTransforms = function( nTfms, ... minmax) {
 	  if ( minmax.length >= 2 && minmax[1] instanceof Float32Array ) {
 		glMatrix.vec3.copy(this._maxP, minmax[1]);
 	  }
-  }
+  }*/
   if ( this.tfms == null || nTfms != this.tfms.length / 16 ) {
 	this.tfms = new Float32Array(16*nTfms);
   }
+  /*
   let volume = glMatrix.vec3.create();
-  glMatrix.vec3.subtract(volume,this._maxP,this._minP);
+  glMatrix.vec3.subtract(volume,this._maxP,this._minP);*/
   let randVec = glMatrix.vec3.create();
   var len2 = 0.0;
-  let m4 = glMatrix.mat4.create();
-  for (let i=0; i<nTfms; i++) {
+  for (let i=0; i<15; i++) {
+    let m4 = glMatrix.mat4.create();
+    /*
     // make a unit vector
     do {
       glMatrix.vec3.set(randVec, 2.0*Math.random()-1.0,
@@ -115,19 +119,52 @@ Attributes.prototype.updateTransforms = function( nTfms, ... minmax) {
       len2 = glMatrix.vec3.sqrLen(randVec); 
     } while ( len2 > 1.0 );
     // Now normalize
-    glMatrix.vec3.scale( randVec, randVec, 1.0/Math.sqrt(len2));
+    //glMatrix.vec3.scale( randVec, randVec, 1.0/Math.sqrt(len2));
     // random angle -pi .. pi
     let angle = Math.PI * ( 2.0 * Math.random() -  1.0 );
-    // Set the rotation matrix
-      glMatrix.mat4.fromRotation(m4, angle, randVec );
-    // Add a random vector scaled upto the viewing volume
-    randVec[0] = (Math.random()-0.5) * volume[0];
-    randVec[1] = (Math.random()-0.5) * volume[1];
-    randVec[2] = (Math.random()-0.5) * volume[2];
-    glMatrix.mat4.translate( m4, m4, randVec );
-	// Copy the matrix into the float buffer for transforms
+    // Set the rotation matrix*/
+      //glMatrix.mat4.fromRotation(m4, angle, randVec );
+    if (i < 12) {
+      glMatrix.mat4.scale(m4, m4, glMatrix.vec3.fromValues(1.0/2.0, 1.0/2.0, 1.0/2.0))
+      glMatrix.mat4.rotate(m4,m4, -Math.PI/2, glMatrix.vec3.fromValues(1.0,0.0, 0.0));
+      // Add a random vector scaled upto the viewing volume
+      if ((i%6) > 2) {
+        randVec[0] = -22+(i%6)*4.5;
+      }
+      else {
+        randVec[0] = -27+(i%6)*4.5;
+      }
+      if (i < 6) {
+        randVec[1] = 20;
+      }
+      else {
+        randVec[1] = 10;
+      }
+      randVec[2] = 10;
+      glMatrix.mat4.translate( m4, m4, randVec );
+      if (i > 5) {
+        glMatrix.mat4.rotate(m4,m4, -2*Math.PI/2, glMatrix.vec3.fromValues(0.0,0.0, 1.0));
+      }
+    // Copy the matrix into the float buffer for transforms
+    }
+    else {
+      glMatrix.mat4.scale(m4, m4, glMatrix.vec3.fromValues(1.0/2.0, 1.0/2.0, 1.0/2.0));
+      glMatrix.mat4.rotate(m4,m4, -Math.PI/2, glMatrix.vec3.fromValues(1.0,0.0, 0.0));
+      glMatrix.mat4.rotate(m4,m4, -Math.PI/2, glMatrix.vec3.fromValues(0.0,0.0, 1.0));
+      // Add a random vector scaled upto the viewing volume
+      randVec[0] = 5 - (i%6)*4.5;
+      randVec[1] = -20;
+      randVec[2] = 10;
+      glMatrix.mat4.translate( m4, m4, randVec );
+    // Copy the matrix into the float buffer for transforms
+    }
+  console.log("Matrix: " + i + "\n");
 	for ( let j=0; j<16; j++) {
+    console.log(j + ": " + m4[j]);
 	  this.tfms[i*16+j] = m4[j];
+    if ((j+1)%4 == 0 && j > 0) {
+      console.log("\n");
+    }
 	}
   }
   return;

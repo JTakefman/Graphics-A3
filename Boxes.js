@@ -50,7 +50,7 @@ var LAST_FRAME = Date.now();
 var VAO;
 
 // Number of boxes
-const N_BOXES = 5;
+const N_BOXES = 18;
 
 function main() {
   // Retrieve <canvas> element
@@ -131,6 +131,10 @@ function start(gl) {
   // Create the matrix to set the projection matrix
   var projMatrix = glMatrix.mat4.create();
   glMatrix.mat4.ortho(projMatrix,-12.0, 12.0, -12.0, 12.0, -12.0, 12.0);
+  glMatrix.mat4.translate(projMatrix, projMatrix, glMatrix.vec3.fromValues(0.0,-10.0,0.0));
+  glMatrix.mat4.rotate(projMatrix, projMatrix, Math.PI/4, glMatrix.vec3.fromValues(1.0, 0.0,0.0))
+  glMatrix.mat4.rotate(projMatrix, projMatrix, -Math.PI/4, glMatrix.vec3.fromValues(0.0, 1.0,0.0))
+  //glMatrix.mat4.lookat(projMatrix,)
 
   var u_proj_matrix = gl.getUniformLocation(gl.program, 'proj_matrix');
   if (u_proj_matrix) {
@@ -259,8 +263,8 @@ function initVertexBuffers(gl) {
 function draw(gl, n, currentAngle, axisAngle, u_rot_matrix) {
   // Set the rotation matrix
     let rotMatrix = glMatrix.mat4.create();  
-  glMatrix.mat4.fromYRotation(rotMatrix, glMatrix.glMatrix.toRadian(axisAngle));
-  glMatrix.mat4.rotateX(rotMatrix, rotMatrix, glMatrix.glMatrix.toRadian(currentAngle));
+  //glMatrix.mat4.fromYRotation(rotMatrix, glMatrix.glMatrix.toRadian(axisAngle));
+  //glMatrix.mat4.rotateX(rotMatrix, rotMatrix, glMatrix.glMatrix.toRadian(currentAngle));
   if ( u_rot_matrix != 0 ) {
      gl.uniformMatrix4fv(u_rot_matrix, false, rotMatrix );
   }
