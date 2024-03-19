@@ -169,6 +169,9 @@ Attributes.prototype.updateTransforms = function( nTfms, ... minmax) {
       //randVec[1] = -20;
       randVec[2] = 10;
       glMatrix.mat4.translate( m4, m4, randVec );
+      if (i < 18) {
+        glMatrix.mat4.rotate(m4,m4, 2*Math.PI/2, glMatrix.vec3.fromValues(0.0,0.0, 1.0));
+      }
     // Copy the matrix into the float buffer for transforms
     }
   console.log("Matrix: " + i + "\n");
